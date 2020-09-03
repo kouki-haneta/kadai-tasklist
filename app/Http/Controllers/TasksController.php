@@ -16,15 +16,16 @@ class TasksController extends Controller
     public function index()
     {
         
-        
+        //$tasks = Task::all();
         //return view('tasks.index',['tasks'=> $tasks,]);
-        
         $data = [];
         if (\Auth::check()) { // 認証済みの場合
             // 認証済みユーザを取得
             $user = \Auth::user();
+            // ユーザの投稿の一覧を作成日時の降順で取得
+            $tasks = $user->tasks()->orderBy('created_at', 'ASC')->paginate(10);
             
-            $tasks = Task::all();
+            
             
             $data = [
                 'user' => $user,
@@ -75,6 +76,8 @@ class TasksController extends Controller
         ]);*/
         
         return redirect('/');
+        
+        
        
     }
 
@@ -138,10 +141,14 @@ class TasksController extends Controller
      */
     public function destroy($id)
     {
-        $task = Task::findOrFail($id);
-        
-        $task->delete();
-        
+       // idの値で投稿を検索して取得
+        $task = \App\Task::findOrFail($id);
+
+        // 認証済みユーザ（閲覧者）がその投稿の所有者である場合は、投稿を削除
+        if (\Auth::id() === $task->user_id) {
+            $task->delete();
+        }
+
         return redirect('/');
         
     }
