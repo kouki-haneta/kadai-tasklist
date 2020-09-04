@@ -84,9 +84,8 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-       if (\Auth::check()){
+       if (\Auth::check()) {
            
-        $user = \Auth::user();
         
         $task = Task::findOrFail($id);
       
@@ -105,8 +104,8 @@ class TasksController extends Controller
     public function edit($id)
     {
         if (\Auth::check()){
-        // 認証済みユーザを取得
-        $user = \Auth::user();
+            
+        
         $task = Task::findOrFail($id);
         
         return view('tasks.edit', ['task'=> $task]);
