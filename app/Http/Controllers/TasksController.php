@@ -70,11 +70,6 @@ class TasksController extends Controller
         $task->content = $request->content;
         $task->save();
         
-        // 認証済みユーザ（閲覧者）の投稿として作成（リクエストされた値をもとに作成）
-        /*$request->user()->tasks()->create([
-            'content' => $request->content,
-        ]);*/
-        
         return redirect('/');
         
         
@@ -89,7 +84,7 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-       if (\Auth::check()){
+       if (\Auth::check() === $task->user_id){
            
         $user = \Auth::user();
         
@@ -109,10 +104,13 @@ class TasksController extends Controller
      */
     public function edit($id)
     {
+        if (\Auth::check() === $task->user_id){
+        
         $task = Task::findOrFail($id);
         
         return view('tasks.edit', ['task'=> $task]);
         
+        }
     }
 
     /**
